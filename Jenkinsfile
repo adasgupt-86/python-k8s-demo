@@ -18,7 +18,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'echo Building Application'
+                sh 'echo Building DEVELOP Branch'
             }
         }
 
