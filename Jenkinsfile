@@ -1,8 +1,35 @@
-@Library('shared-lib') _
+        @Library('shared-lib') _
 
 pipeline {
 
     agent any
+
+    parameters {
+
+        string(
+            name: 'IMAGE_TAG',
+            defaultValue: 'v1',
+            description: 'Docker Image Tag'
+        )
+
+        text(
+            name: 'RELEASE_NOTES',
+            defaultValue: 'No release notes',
+            description: 'Release Notes'
+        )
+
+        choice(
+            name: 'ENVIRONMENT',
+            choices: ['DEV', 'QA', 'PROD'],
+            description: 'Deployment Environment'
+        )
+
+        booleanParam(
+            name: 'DEPLOY',
+            defaultValue: true,
+            description: 'Deploy application?'
+        )
+    }
 
     stages {
 
@@ -12,22 +39,60 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
+        stage('Print Parameters') {
             steps {
-                dockerBuild("adasgupt86/python-k8s-demo:v1")
+
+                echo "Image Tag : ${params.IMAGE_TAG}"
+                echo "Environment : ${params.ENVIRONMENT}"
+                echo "Deploy : ${params.DEPLOY}"
+                echo "Release Notes:"
+                echo "${params.RELEASE_NOTES}"
+
             }
+        }
+
+        stage('Docker Build') {
+
+            steps {
+
+                dockerBuild("adasgupt86/python-k8s-demo:${params.IMAGE_TAG}")
+
+            }
+
         }
 
         stage('Docker Push') {
+
             steps {
-                dockerPush("adasgupt86/python-k8s-demo:v1")
+
+                dockerPush("adasgupt86/python-k8s-demo:${params.IMAGE_TAG}")
+
             }
+
         }
 
         stage('Deploy') {
-            steps {
-                deployApp()
+
+            when {
+
+                expression {
+
+                    return params.DEPLOY
+
+                }
+
             }
+
+            steps {
+
+                deployApp()
+
+            }
+
         }
+
+    }
+
+}}
     }
 }
