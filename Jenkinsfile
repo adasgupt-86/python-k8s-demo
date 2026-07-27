@@ -24,21 +24,21 @@ pipeline {
                 stage('Unit Test') {
                     steps {
                         echo "Running Unit Tests..."
-                        sh "sleep 10"
+                        sh "sleep 20"
                     }
                 }
 
                 stage('SonarQube') {
                     steps {
                         echo "Running Sonar Scan..."
-                        sh "sleep 15"
+                        sh "sleep 25"
                     }
                 }
 
                 stage('Trivy Scan') {
                     steps {
                         echo "Running Trivy Scan..."
-                        sh "sleep 8"
+                        sh "sleep 30"
                     }
                 }
 
